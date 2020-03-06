@@ -10,7 +10,7 @@ class TinderBot():
     def login(self):
         self.driver.get('https://tinder.com')
 
-        sleep(10) # pause 5 seconds for page to load
+        sleep(5) # pause 5 seconds for page to load
 
         fb_btn = self.driver.find_element_by_xpath('//*[@id="modal-manager"]/div/div/div/div/div[3]/span/div[2]/button')
         fb_btn.click()
@@ -36,6 +36,8 @@ class TinderBot():
         login_btn = self.driver.find_element_by_xpath('//*[@id="u_0_0"]')
         login_btn.click()
 
+        sleep(5) # pause 5 seconds for page to load
+
         # switch to base window
         self.driver.switch_to.window(base_window)
 
@@ -44,17 +46,45 @@ class TinderBot():
         allow_notification = self.driver.find_element_by_xpath('//*[@id="modal-manager"]/div/div/div/div/div[3]/button[1]')
         allow_notification.click()
 
-        def like(self):
-            like_btn = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div[1]/div/div[2]/div[4]/button')
-            like_btn.click()
+    def like(self):
+        like_btn = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div[1]/div/div[2]/div[4]/button')
+        like_btn.click()
 
-        
-        def dislike(self):
-            dislike_btn = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div[1]/div/div[2]/div[2]/button')
-            dislike_btn.click()
+    def dislike(self):
+        dislike_btn = self.driver.find_element_by_xpath('//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div[1]/div/div[2]/div[2]/button')
+        dislike_btn.click()
+
+    # TODO: Add logic for dislike
+    def auto_swipe(self):
+        while True:
+            sleep(random.randint(3,6))
+            # finite-state machine
+            try:
+                self.like()
+            except Exception: # if cannot click like try closing popups
+                try:
+                    self.close_add_home_screen_popup()
+                except Exception:
+                    try:
+                        self.close_match()
+                    except Exception:
+                        self.close_out_of_likes_popup()
 
 
+
+    def close_add_home_screen_popup(self):
+            add_home_screen = self.driver.find_element_by_xpath('//*[@id="modal-manager"]/div/div/div[2]/button[2]')
+            add_home_screen.click()
+
+    def close_out_of_likes_popup(self):
+            out_of_likes = self.driver.find_element_by_xpath('//*[@id="modal-manager"]/div/div/div[3]/button[2]')
+            out_of_likes.click()
+
+    def close_match(self):
+            keep_swiping = self.driver.find_element_by_xpath('//*[@id="modal-manager-canvas"]/div/div/div[1]/div/div[3]/a')
+            keep_swiping.close()
 
 
 bot = TinderBot() # instantiate object
 bot.login()
+bot.auto_swipe()
